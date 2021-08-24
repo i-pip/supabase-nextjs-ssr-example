@@ -10,7 +10,7 @@ export default function Auth() {
       setLoading(true);
       const { error } = await supabase.auth.signIn({ email });
       if (error) throw error;
-    } catch {
+    } catch (error) {
       alert(error.error_description || error.message);
     } finally {
       setLoading(false);
