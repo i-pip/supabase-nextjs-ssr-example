@@ -5,6 +5,7 @@ import Avatar from "./Avatar";
 export default function Account({ session }) {
   const [loading, setLoading] = useState(true);
   const [username, setUsername] = useState(null);
+  const [email, setEmail] = useState(null);
   const [website, setWebsite] = useState(null);
   const [avatar_url, setAvatarUrl] = useState(null);
 
@@ -16,6 +17,7 @@ export default function Account({ session }) {
     try {
       setLoading(true);
       const user = supabase.auth.user();
+      setEmail(session.user.email);
 
       let { data, error } = await supabase
         .from("profiles")
@@ -56,6 +58,11 @@ export default function Account({ session }) {
         returning: "minimal", // Don't return the value after inserting
       });
 
+      if (email != session.user.email) {
+        console.log("updating email");
+        supabase.auth.update({ email });
+      }
+
       if (error) {
         throw error;
       }
@@ -78,7 +85,12 @@ export default function Account({ session }) {
       />
       <div>
         <label htmlFor="email">Email</label>
-        <input id="email" type="text" value={session.user.email} disabled />
+        <input
+          id="email"
+          type="text"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
       </div>
       <div>
         <label htmlFor="username">Name</label>
